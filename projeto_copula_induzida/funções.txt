@@ -1,0 +1,11 @@
+FUNÇÃO PARA ATUALIZAR HORÁRIO DE TERMINO
+
+atualizarHorTerm()
+
+verificarHor(int horaa, int minutoo)
+
+escreverEspera()
+escreverModific()
+escreverDisplay(String textoo, texto 2)
+
+verificaMudancaPrograma()
