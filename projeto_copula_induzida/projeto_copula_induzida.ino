@@ -492,15 +492,22 @@ void loop() {
       //temp_pisc = millis();
       //ligarLeds();
     //}
-    verificaMudancaPrograma();
-    digitalWrite(5,LOW);
-    digitalWrite(9,LOW);
-    digitalWrite(10,LOW);
-    delay(400);
+    
     digitalWrite(5,HIGH);
     digitalWrite(9,HIGH);
     digitalWrite(10,HIGH);
+    delay(400);
+    digitalWrite(5,LOW);
+    digitalWrite(9,LOW);
+    digitalWrite(10,LOW);
     delay(350);
+    verificaMudancaPrograma();
   }
-  delay(50);
+
+  if (state == 3 || state == 0){
+    delay(50);
+  } else {
+    delay(50);
+  }
+  
 }
