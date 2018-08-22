@@ -17,21 +17,24 @@ int ciclo = 0; //ciclo atual
 int hora = 18;//hora padrão para início
 int minuto = 0;//minuto padrão para início
 bool com_ir = false;//verifica se o comando para mudar temperatura do ar foi acionado
-bool dis_esc = false;//verifica se pode mandar comando para o display
+//bool dis_esc = false;//verifica se pode mandar comando para o display
 int atu_hora; //horario atual
 int atu_min; //minuto atual
 int ter_hora = 19; //horario de termino
 int ter_min = 20; //minuto de termino
-long temp_decorr;
-bool men_certz = false;
+int temp_decorr;
+//bool men_certz = false;
 int temp_pisc = 0; //padrão
 int interv_pisc = 500; //milisegundos
 int tempo_ar = 5; //minutos
 bool botao1_ativo = false; //botao solto
 bool botao2_ativo = false; //botao solto
 int cont_regr = 60; //segundos para começar o programa
+int segundo_inicial_contagem = 0;
+int minuto_inicial_contagem = 0;
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 void setup() {
   lcd.begin(16, 2); //iniciando o Display 16x2
 
@@ -50,6 +53,7 @@ void setup() {
   digitalWrite(5,LOW);
   digitalWrite(9,LOW);
   digitalWrite(10,LOW);
+  
   //PORTA 3 RESERVADA PARA IR
 
   //ESCREVE UMA MENSAGEM DE BEM VINDO NO DISPLAY
@@ -69,6 +73,7 @@ void setup() {
 
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 bool verificarHor(int horaa, int minutoo){
     
   if ((int) dataehora.hour != horaa || (int) dataehora.minute != minutoo){
@@ -80,20 +85,19 @@ bool verificarHor(int horaa, int minutoo){
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 void escreverEspera(){
   
-  if (atu_hora == hora && atu_min == (minuto - 1)){
-    if (cont_regr > 0){
-      cont_regr = cont_regr - 1;
+  if (atu_hora == hora && atu_min == (minuto - 1)){    
       escreverDisplay("RELOGIO: " + String(atu_hora) + ":" + arrumarMinuto(atu_min),"INICIA EM: " + String(cont_regr) + "seg"); 
-      delay(950); //junto com o delay de 50 do loop fica igual a 1 segundo
-    }
+      delay(950); //junto com o delay de 50 do loop fica igual a 1 segundo    
   } else {
     escreverDisplay("RELOGIO: " + String(atu_hora) + ":" + arrumarMinuto(atu_min),"INICIO: " + String(hora) + ":" + arrumarMinuto(minuto)); 
   }
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 void ligarLeds(){
   digitalWrite(5,HIGH);
   digitalWrite(9,HIGH);
@@ -101,6 +105,7 @@ void ligarLeds(){
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 void desligarLeds(){
   digitalWrite(5,LOW);
   digitalWrite(9,LOW);
@@ -108,6 +113,7 @@ void desligarLeds(){
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 String arrumarMinuto(int valoor){
   if (valoor < 10){
     return "0" + String(valoor);
@@ -117,11 +123,13 @@ String arrumarMinuto(int valoor){
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 void escreverModific(){
   escreverDisplay("INICIAR EM",String(hora) + ":" + arrumarMinuto(minuto));
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 void escreverDisplay(String textoo, String textooo){
   String y;
   int x = (16 - textoo.length()) / 2;
@@ -142,27 +150,59 @@ void escreverDisplay(String textoo, String textooo){
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
-void calcularTempoRestante (String textinho,int miliseg){
+void calcularTempoRestante (String textinho,long miliseg){
+  //PERFEITO
   // min = miliseg / 60000
   // seg = (miliseg - (min * 60000)) / 1000
   int min_rest = miliseg / 60000;
   int seg_rest = (miliseg - (min_rest * 60000)) / 1000;
+  //int miliseg_seguir = 0;
 
-  escreverDisplay(textinho,"0" + String(min_rest) + ":" + arrumarMinuto(seg_rest));
+  //if (miliseg_seguir == 0 || miliseg_seguir < 1000){
+    //miliseg_seguir += 
+  //}
+
+  //if (miliseg < 1000){
+    //int minuto_inicial_contagem = dataehora.minute;
+    //int segundo_atual_contagem = dataehora.second;
+  //}
+  
+  
+  //int segundo_inicial_contagem = dataehora.second;
+  //int minuto_inicial_contagem = dataehora.minute;
+
+  //int minuto_atual = dataehora.minute;
+  //int segundo_atual = dataehora.second;
+  
+  //int min_rest = minuto_atual - minuto_inicial_contagem;
+  //int seg_rest = segundo_atual - segundo_inicial_contagem;
+  String segundos_restantes;
+  if (seg_rest < 10){
+    segundos_restantes = "0" + String(seg_rest);
+  } else {
+    segundos_restantes = String(seg_rest);
+  }
+  
+  escreverDisplay(textinho,"0" + String(min_rest) + ":" + segundos_restantes);
+  //escreverDisplay(String(miliseg),"");
 
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
 void verificaMudancaPrograma(){
+  dataehora = rtc.getDateTime();
   //ciclo 0 a 4
   //0=parado, 1=primeiro ciclo, 4=ultimo ciclo
   //state 2 e 3
   //2=escuro, 3=flash
+  //10 MINUTOS == 600.000 MILISEGUNDOS
   if (state == 2){
     if (ciclo == 1){
       if (millis() > (temp_decorr + 600000)){
         state = 3;
         temp_pisc = millis();
+        int segundo_inicial_contagem = dataehora.second;
+        int minuto_inicial_contagem = dataehora.minute;
       }
       else{
         calcularTempoRestante("Ciclo 1: Escura",millis() - temp_decorr);
@@ -172,6 +212,8 @@ void verificaMudancaPrograma(){
       if (millis() > (temp_decorr + 1800000)){
         state = 3;
         temp_pisc = millis();
+        int segundo_inicial_contagem = dataehora.second;
+        int minuto_inicial_contagem = dataehora.minute;
       } else{
         calcularTempoRestante("Ciclo 2: Escura",millis() - temp_decorr - 1200000);
       }
@@ -180,6 +222,8 @@ void verificaMudancaPrograma(){
       if (millis() > (temp_decorr + 3000000)){
         state = 3;
         temp_pisc = millis();
+        int segundo_inicial_contagem = dataehora.second;
+        int minuto_inicial_contagem = dataehora.minute;
         
       } else {
         calcularTempoRestante("Ciclo 3: Escura",millis() - temp_decorr - 2400000);
@@ -189,6 +233,8 @@ void verificaMudancaPrograma(){
       if (millis() > (temp_decorr + 4200000)){
         state = 3;
         temp_pisc = millis();
+        int segundo_inicial_contagem = dataehora.second;
+        int minuto_inicial_contagem = dataehora.minute;
       } else {
         calcularTempoRestante("Ciclo 4: Escura",millis() - temp_decorr - 3600000);
       }
@@ -199,6 +245,8 @@ void verificaMudancaPrograma(){
       if (millis() > (temp_decorr + 1200000)){
         ciclo = 2;
         state = 2;
+        int segundo_inicial_contagem = dataehora.second;
+        int minuto_inicial_contagem = dataehora.minute;
       }
       else{ 
       calcularTempoRestante("Ciclo 1: Flashs",millis() - temp_decorr - 600000);
@@ -208,6 +256,8 @@ void verificaMudancaPrograma(){
       if (millis() > (temp_decorr + 2400000)){
         ciclo = 3;
         state = 2;
+        int segundo_inicial_contagem = dataehora.second;
+        int minuto_inicial_contagem = dataehora.minute;
       } else{
         calcularTempoRestante("Ciclo 2: Flashs",millis() - temp_decorr - 1800000);
       }
@@ -216,6 +266,8 @@ void verificaMudancaPrograma(){
       if (millis() > (temp_decorr + 3600000)){
         ciclo = 4;
         state = 2;
+        int segundo_inicial_contagem = dataehora.second;
+        int minuto_inicial_contagem = dataehora.minute;
       } else {
         calcularTempoRestante("Ciclo 3: Flashs",millis() - temp_decorr - 3000000);
       }
@@ -233,6 +285,7 @@ void verificaMudancaPrograma(){
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 void adicionarMeiaHora(){
  
   if (minuto < 30){
@@ -265,11 +318,15 @@ void aumentarTempAr(){
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
+//PERFEITO
 void iniciarPrograma(){
-  digitalWrite(12, LOW);
+  dataehora = rtc.getDateTime();
+  //digitalWrite(12, LOW);
   ciclo = 1;
   temp_decorr = millis();
   state = 2;
+  //int segundo_inicial_contagem = dataehora.second;
+  //int minuto_inicial_contagem = dataehora.minute;
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
@@ -278,10 +335,8 @@ void finalizarPrograma(){
   ter_hora = dataehora.hour;
   ter_min = dataehora.minute;
   escreverDisplay("Finalizado em:",String(ter_hora) + ":" + arrumarMinuto(ter_min));
-  dis_esc = true;
+  delay(2000);
   temp_decorr = millis();
-  digitalWrite(12, HIGH);
-  cont_regr = 60;
   ciclo = 0;
   state = 0;
 }
@@ -291,17 +346,19 @@ void loop() {
   dataehora = rtc.getDateTime(); //armazena hora atual
   
   //VERIFICA SE ESTÁ NO ESTADO DE ESPERA
-  if (state == 0){
+  if (state == 0){ //PERFEITO
+    
 
     //verifica tempo para mostrar mensagem de término do programa
-    if (dis_esc && millis() > (temp_decorr + 600000)){
-      dis_esc = false;
-      ter_hora = 0;
-      ter_min = 0;
-      temp_decorr = 0;
-    }
+    //if (dis_esc && millis() > (temp_decorr + 600000)){
+      //dis_esc = false;
+      //ter_hora = 0;
+      //ter_min = 0;
+      //temp_decorr = 0;
+    //}
     //VERIFICA SE PODE ESCREVER NO DISPLAY O HORÁRIO
-    if (!men_certz && !dis_esc && !verificarHor(atu_hora,atu_min)){
+    //PERFEITO
+    if (!verificarHor(atu_hora,atu_min)){
       atu_hora = dataehora.hour;
       atu_min = dataehora.minute;
       //escreve o horário no display
@@ -309,79 +366,82 @@ void loop() {
     }
 
     //----------------------------------------------------
+    //PERFEITO
       if (atu_hora == hora && atu_min == minuto){
         iniciarPrograma();
       }
 
      //---------------------------------------------------------
       //VERIFICA SE ESTÁ PRONTO PARA MUDAR TEMPERATURA
-      if (minuto >= tempo_ar && atu_hora == hora && atu_min == (minuto - tempo_ar) && com_ir == false){
+      //if (minuto >= tempo_ar && atu_hora == hora && atu_min == (minuto - tempo_ar) && com_ir == false){
         //baixarTempAr();
-      } else if (minuto < tempo_ar && hora != 0 && atu_hora == (hora - 1) && atu_min == (59 - ((tempo_ar - 1) - minuto)) && com_ir == false){
+      //} else if (minuto < tempo_ar && hora != 0 && atu_hora == (hora - 1) && atu_min == (59 - ((tempo_ar - 1) - minuto)) && com_ir == false){
         //baixarTempAr();
-      } else if (minuto < tempo_ar && hora == 0 && atu_hora == 23 && atu_min == (59 - ((tempo_ar - 1) - minuto)) && com_ir == false){
+      //} else if (minuto < tempo_ar && hora == 0 && atu_hora == 23 && atu_min == (59 - ((tempo_ar - 1) - minuto)) && com_ir == false){
         //baixarTempAr();
-      }
+      //}
 
-//VERIFICA SE OS BOTÕES FORAM APERTADOS
-  if (cont_regr >= 60){
-    int pushVermelho = digitalRead(1);
-    int pushVerde = digitalRead(0);
-  
-      if (pushVermelho == LOW ){ //verfica se botao vermelho foi pressionado
-        if (botao2_ativo == false){
-            botao2_ativo = true;
-            //SCRIPT A SER FEITO
-            if (dis_esc == false){ //verifica se pode mudar horario
-              if (men_certz == false){ //verifica se a mensagem de certeza de inicio não está aparecendo
-                escreverModific();
-                state = 1;
-              } else {
-                escreverEspera();
-                men_certz = false; //cancela confirmação
-              }
-            } else {
-              escreverDisplay("NAO PODE MUDAR","HORARIO AGORA");
-              delay(1500);
-              escreverDisplay("Finalizado em:",String(ter_hora) + ":" + arrumarMinuto(ter_min));
-            }
-            
+  //VERIFICA SE OS BOTÕES FORAM APERTADOS
+   //PERFEITO
+      int pushVermelho = digitalRead(1);
+      int pushVerde = digitalRead(0);
+    
+        if (pushVermelho == LOW ){ //verfica se botao vermelho foi pressionado 
+          //PERFEITO
+          if (botao2_ativo == false){
+              botao2_ativo = true;
+              //SCRIPT A SER FEITO
+              //if (dis_esc == false){ //verifica se pode mudar horario
+                //if (men_certz == false){ //verifica se a mensagem de certeza de inicio não está aparecendo
+                  //PERFEITO
+                  escreverModific();
+                  state = 1;
+                //} else {
+                  //escreverEspera();
+                  //men_certz = false; //cancela confirmação
+                //}
+              //} //else {
+                //escreverDisplay("NAO PODE MUDAR","HORARIO AGORA");
+                //delay(1500);
+                //escreverDisplay("Finalizado em:",String(ter_hora) + ":" + arrumarMinuto(ter_min));
+              //}
+              
+          }
+          
+        } else {
+          if (botao2_ativo == true){
+            botao2_ativo = false;
+          }
+        }
+    
+      if (pushVerde == LOW ){ //verifica se botao verde foi pressionado
+        if (botao1_ativo == false){
+            botao1_ativo = true; //botal apertado
+            //if (dis_esc == false){ //verifica se pode iniciar
+              //if (men_certz == false){ //verifica se não está aparecendo a mensagem para confirmar inicio
+                //escreverDisplay("INICIAR PROGRAMA?","");
+                //men_certz = true;
+              //} else {
+                iniciarPrograma();
+                //men_certz = false;
+              //}
+            //} else {
+              //escreverDisplay("NAO PODE","INICAR AGORA");
+              //delay(1500);
+              //escreverDisplay("Finalizado em:",String(ter_hora) + ":" + arrumarMinuto(ter_min));
+            //}
         }
         
       } else {
-        if (botao2_ativo == true){
-          botao2_ativo = false;
+        if (botao1_ativo == true){
+          botao1_ativo = false;
         }
       }
-  
-    if (pushVerde == LOW ){ //verifica se botao verde foi pressionado
-      if (botao1_ativo == false){
-          botao1_ativo = true; //botal apertado
-          if (dis_esc == false){ //verifica se pode iniciar
-            if (men_certz == false){ //verifica se não está aparecendo a mensagem para confirmar inicio
-              escreverDisplay("INICIAR PROGRAMA?","");
-              men_certz = true;
-            } else {
-              iniciarPrograma();
-              men_certz = false;
-            }
-          } else {
-            escreverDisplay("NAO PODE","INICAR AGORA");
-            delay(1500);
-            escreverDisplay("Finalizado em:",String(ter_hora) + ":" + arrumarMinuto(ter_min));
-          }
-      }
-      
-    } else {
-      if (botao1_ativo == true){
-        botao1_ativo = false;
-      }
-    }
+    
   }
-}
 
   //VERIFICA SE ESTÁ NO ESTADO DE MODIFICAR HORARIO
-  else if (state == 1){
+  else if (state == 1){ //PERFEITO
     int pushVermelho = digitalRead(1);
     int pushVerde = digitalRead(0);
       
@@ -421,19 +481,26 @@ void loop() {
 
   //VERIFICA SE O PROGRAMA ESTÁ NA FASE DE PISCAR
   else if (state == 3){
-    if (millis() < (temp_pisc + interv_pisc)){
-      ligarLeds();
-    }
-    else if (millis > (temp_pisc + interv_pisc) && millis() < (temp_pisc + (interv_pisc * 2))){
-      desligarLeds();
-    }
+    //if (millis() < (temp_pisc + interv_pisc)){
+      //ligarLeds();
+    //}
+    //else if (millis > (temp_pisc + interv_pisc) && millis() < (temp_pisc + (interv_pisc * 2))){
+      //desligarLeds();
+    //}
     
-    else if (millis > (temp_pisc + (interv_pisc * 2))){
-      temp_pisc = millis();
-      ligarLeds();
-    }
+    //else if (millis > (temp_pisc + (interv_pisc * 2))){
+      //temp_pisc = millis();
+      //ligarLeds();
+    //}
     verificaMudancaPrograma();
+    digitalWrite(5,LOW);
+    digitalWrite(9,LOW);
+    digitalWrite(10,LOW);
+    delay(400);
+    digitalWrite(5,HIGH);
+    digitalWrite(9,HIGH);
+    digitalWrite(10,HIGH);
+    delay(350);
   }
-
   delay(50);
 }

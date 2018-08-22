@@ -6,7 +6,7 @@ int valor = 0;
 bool botao1_ativo = true; //botao solto
 int valor2 = 0;
 bool botao2_ativo = true; //botao solto
-
+int miliseg = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -16,6 +16,16 @@ void setup() {
 
   pinMode(0, INPUT_PULLUP);
   pinMode(1, INPUT_PULLUP);
+}
+
+void calcularTempoRestante (int milisegs){
+  // min = miliseg / 60000
+  // seg = (miliseg - (min * 60000)) / 1000
+  int min_rest = miliseg / 60000;
+  int seg_rest = (miliseg - (min_rest * 60000)) / 1000;
+
+  escreverDisplay(String(int(60000/milisegs)),"");
+
 }
 
 void escreverDisplay(String textoo, String textooo){
@@ -45,9 +55,8 @@ void loop() {
   if (pushVermelho == LOW ){
     if (botao2_ativo == false){
         botao2_ativo = true; //botal apertado
-        valor2 += 1;
-        lcd.clear();
-        escreverDisplay("Verde = " + String(valor),"Vermelho = " + String(valor2));
+        calcularTempoRestante(miliseg);
+        miliseg += 60000;
     }
     
   } else {
