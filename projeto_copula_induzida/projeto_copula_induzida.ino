@@ -1,5 +1,6 @@
 #include "LiquidCrystal.h" //biblioteca do Diplay 16x2
-LiquidCrystal lcd(2, 4, 6, 7, 8, 11); //declarando o Display 16x2
+const int rs = 13, en = 12, d4 = 8, d5 = 7, d6 = 4, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 #include "Wire.h" //biblioteca de manipulação i2c
 #include "DS3231.h" //biblioteca do RTC
 DS3231 rtc; //delarando o RTC
@@ -50,10 +51,6 @@ void setup() {
   digitalWrite(9,LOW);
   digitalWrite(10,LOW);
   //PORTA 3 RESERVADA PARA IR
-
-  //pino do led do Display 16x2
-  pinMode(12, OUTPUT);
-  digitalWrite(12, HIGH);
 
   //ESCREVE UMA MENSAGEM DE BEM VINDO NO DISPLAY
   escreverDisplay("SISTEMA DE", "COPULA INDUZIDA");

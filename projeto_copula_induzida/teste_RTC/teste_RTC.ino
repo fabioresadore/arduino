@@ -20,5 +20,6 @@ void loop() {
   int segundo = dataehora.second;
   // put your main code here, to run repeatedly:
   Serial.println("Hora: " + String(hora) + " Minuto: " + String(minuto) + " Segundo: " + String(segundo));
+  //Serial.println("teste");
   delay(1000);
 }
