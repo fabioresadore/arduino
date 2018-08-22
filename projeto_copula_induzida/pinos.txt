@@ -1,0 +1,22 @@
+0 - verde
+1 - vermelho
+2 - d7
+3 - IR
+4 - d6
+5 - LED
+6 - 
+7 - d5
+8 - d4
+9 - led
+10 - led
+11
+12 - en
+13 - rs
+
+a0 
+a1 
+a2
+a3
+a4 - VDA
+a5 - SCL
+a6
