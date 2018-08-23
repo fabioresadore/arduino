@@ -8,30 +8,30 @@ RTCDateTime dataehora; //configurando função
 #include "IRremote.h" //biblioteca de led IR
 IRsend irsend; //declara a função
 
-int state = 10; 
+int state = 0; 
 //0=esperando inicio
 //1=editando horário
 //2=fase escura
 //3=fase piscando
 int ciclo = 0; //ciclo atual
 int hora = 18;//hora padrão para início
-int minuto = 0;//minuto padrão para início
+int minuto = 30;//minuto padrão para início
 bool com_ir = false;//verifica se o comando para mudar temperatura do ar foi acionado
 //bool dis_esc = false;//verifica se pode mandar comando para o display
 int atu_hora; //horario atual
 int atu_min; //minuto atual
-int ter_hora = 19; //horario de termino
-int ter_min = 20; //minuto de termino
-int temp_decorr;
+//int ter_hora = 19; //horario de termino
+//int ter_min = 50; //minuto de termino
+long temp_decorr;
 //bool men_certz = false;
-int temp_pisc = 0; //padrão
-int interv_pisc = 500; //milisegundos
-int tempo_ar = 5; //minutos
+//int //temp_pisc = 0; //padrão
+//int interv_pisc = 500; //milisegundos
+//int tempo_ar = 5; //minutos
 bool botao1_ativo = false; //botao solto
 bool botao2_ativo = false; //botao solto
 int cont_regr = 60; //segundos para começar o programa
-int segundo_inicial_contagem = 0;
-int minuto_inicial_contagem = 0;
+//int segundo_inicial_contagem = 0;
+//int minuto_inicial_contagem = 0;
 
 //---------------------------------------------------------------------------------------------------------------------------
 //PERFEITO
@@ -55,12 +55,13 @@ void setup() {
   digitalWrite(10,LOW);
   
   //PORTA 3 RESERVADA PARA IR
-
+  //PORTA 11 RESERVADA PARA O IR RCV
+  
   //ESCREVE UMA MENSAGEM DE BEM VINDO NO DISPLAY
   escreverDisplay("SISTEMA DE", "COPULA INDUZIDA");
   delay(2000);
-  escreverDisplay("BEM VINDO!"," ");
-  delay(1000);
+  //escreverDisplay("BEM VINDO!"," ");
+  //delay(1000);
   //armazena horário atual
   dataehora = rtc.getDateTime();
   atu_hora = dataehora.hour;
@@ -98,19 +99,19 @@ void escreverEspera(){
 
 //---------------------------------------------------------------------------------------------------------------------------
 //PERFEITO
-void ligarLeds(){
-  digitalWrite(5,HIGH);
-  digitalWrite(9,HIGH);
-  digitalWrite(10,HIGH);
-}
+//void ligarLeds(){
+  //digitalWrite(5,HIGH);
+  //digitalWrite(9,HIGH);
+  //digitalWrite(10,HIGH);
+//}
 
 //---------------------------------------------------------------------------------------------------------------------------
 //PERFEITO
-void desligarLeds(){
-  digitalWrite(5,LOW);
-  digitalWrite(9,LOW);
-  digitalWrite(10,LOW);
-}
+//void desligarLeds(){
+  //digitalWrite(5,LOW);
+  //digitalWrite(9,LOW);
+  //digitalWrite(10,LOW);
+//}
 
 //---------------------------------------------------------------------------------------------------------------------------
 //PERFEITO
@@ -200,9 +201,9 @@ void verificaMudancaPrograma(){
     if (ciclo == 1){
       if (millis() > (temp_decorr + 600000)){
         state = 3;
-        temp_pisc = millis();
-        int segundo_inicial_contagem = dataehora.second;
-        int minuto_inicial_contagem = dataehora.minute;
+        //temp_pisc = millis();
+        //int segundo_inicial_contagem = dataehora.second;
+        //int minuto_inicial_contagem = dataehora.minute;
       }
       else{
         calcularTempoRestante("Ciclo 1: Escura",millis() - temp_decorr);
@@ -211,9 +212,9 @@ void verificaMudancaPrograma(){
     else if (ciclo == 2){
       if (millis() > (temp_decorr + 1800000)){
         state = 3;
-        temp_pisc = millis();
-        int segundo_inicial_contagem = dataehora.second;
-        int minuto_inicial_contagem = dataehora.minute;
+        //temp_pisc = millis();
+        //int segundo_inicial_contagem = dataehora.second;
+        //int minuto_inicial_contagem = dataehora.minute;
       } else{
         calcularTempoRestante("Ciclo 2: Escura",millis() - temp_decorr - 1200000);
       }
@@ -221,9 +222,9 @@ void verificaMudancaPrograma(){
     else if (ciclo == 3){
       if (millis() > (temp_decorr + 3000000)){
         state = 3;
-        temp_pisc = millis();
-        int segundo_inicial_contagem = dataehora.second;
-        int minuto_inicial_contagem = dataehora.minute;
+        //temp_pisc = millis();
+        //int segundo_inicial_contagem = dataehora.second;
+        //int minuto_inicial_contagem = dataehora.minute;
         
       } else {
         calcularTempoRestante("Ciclo 3: Escura",millis() - temp_decorr - 2400000);
@@ -232,9 +233,9 @@ void verificaMudancaPrograma(){
     else if (ciclo == 4){
       if (millis() > (temp_decorr + 4200000)){
         state = 3;
-        temp_pisc = millis();
-        int segundo_inicial_contagem = dataehora.second;
-        int minuto_inicial_contagem = dataehora.minute;
+        //temp_pisc = millis();
+        //int segundo_inicial_contagem = dataehora.second;
+        //int minuto_inicial_contagem = dataehora.minute;
       } else {
         calcularTempoRestante("Ciclo 4: Escura",millis() - temp_decorr - 3600000);
       }
@@ -245,8 +246,8 @@ void verificaMudancaPrograma(){
       if (millis() > (temp_decorr + 1200000)){
         ciclo = 2;
         state = 2;
-        int segundo_inicial_contagem = dataehora.second;
-        int minuto_inicial_contagem = dataehora.minute;
+        //int segundo_inicial_contagem = dataehora.second;
+        //int minuto_inicial_contagem = dataehora.minute;
       }
       else{ 
       calcularTempoRestante("Ciclo 1: Flashs",millis() - temp_decorr - 600000);
@@ -256,8 +257,8 @@ void verificaMudancaPrograma(){
       if (millis() > (temp_decorr + 2400000)){
         ciclo = 3;
         state = 2;
-        int segundo_inicial_contagem = dataehora.second;
-        int minuto_inicial_contagem = dataehora.minute;
+        //int segundo_inicial_contagem = dataehora.second;
+        //int minuto_inicial_contagem = dataehora.minute;
       } else{
         calcularTempoRestante("Ciclo 2: Flashs",millis() - temp_decorr - 1800000);
       }
@@ -266,8 +267,8 @@ void verificaMudancaPrograma(){
       if (millis() > (temp_decorr + 3600000)){
         ciclo = 4;
         state = 2;
-        int segundo_inicial_contagem = dataehora.second;
-        int minuto_inicial_contagem = dataehora.minute;
+        //int segundo_inicial_contagem = dataehora.second;
+        //int minuto_inicial_contagem = dataehora.minute;
       } else {
         calcularTempoRestante("Ciclo 3: Flashs",millis() - temp_decorr - 3000000);
       }
@@ -282,6 +283,7 @@ void verificaMudancaPrograma(){
       }
     }
   }
+  //delay(950);
 }
 
 //---------------------------------------------------------------------------------------------------------------------------
@@ -320,7 +322,7 @@ void aumentarTempAr(){
 //---------------------------------------------------------------------------------------------------------------------------
 //PERFEITO
 void iniciarPrograma(){
-  dataehora = rtc.getDateTime();
+  //dataehora = rtc.getDateTime();
   //digitalWrite(12, LOW);
   ciclo = 1;
   temp_decorr = millis();
@@ -332,11 +334,11 @@ void iniciarPrograma(){
 //---------------------------------------------------------------------------------------------------------------------------
 void finalizarPrograma(){
   //aumentarTempAr();
-  ter_hora = dataehora.hour;
-  ter_min = dataehora.minute;
-  escreverDisplay("Finalizado em:",String(ter_hora) + ":" + arrumarMinuto(ter_min));
-  delay(2000);
-  temp_decorr = millis();
+  //ter_hora = dataehora.hour;
+  //ter_min = dataehora.minute;
+  //escreverDisplay("Finalizado em:",String(ter_hora) + ":" + arrumarMinuto(ter_min));
+  //delay(2000);
+  temp_decorr = 0;
   ciclo = 0;
   state = 0;
 }
@@ -347,7 +349,7 @@ void loop() {
   
   //VERIFICA SE ESTÁ NO ESTADO DE ESPERA
   if (state == 0){ //PERFEITO
-    
+    temp_decorr = millis();
 
     //verifica tempo para mostrar mensagem de término do programa
     //if (dis_esc && millis() > (temp_decorr + 600000)){
@@ -481,15 +483,15 @@ void loop() {
 
   //VERIFICA SE O PROGRAMA ESTÁ NA FASE DE PISCAR
   else if (state == 3){
-    //if (millis() < (temp_pisc + interv_pisc)){
+    //if (millis() < (//temp_pisc + interv_pisc)){
       //ligarLeds();
     //}
-    //else if (millis > (temp_pisc + interv_pisc) && millis() < (temp_pisc + (interv_pisc * 2))){
+    //else if (millis > (//temp_pisc + interv_pisc) && millis() < (//temp_pisc + (interv_pisc * 2))){
       //desligarLeds();
     //}
     
-    //else if (millis > (temp_pisc + (interv_pisc * 2))){
-      //temp_pisc = millis();
+    //else if (millis > (//temp_pisc + (interv_pisc * 2))){
+      ////temp_pisc = millis();
       //ligarLeds();
     //}
     
@@ -504,10 +506,6 @@ void loop() {
     verificaMudancaPrograma();
   }
 
-  if (state == 3 || state == 0){
-    delay(50);
-  } else {
-    delay(50);
-  }
+  delay(50);
   
 }
