@@ -15,7 +15,7 @@ int state = 0;
 //3=fase piscando
 int ciclo = 0; //ciclo atual
 int hora = 18;//hora padrão para início
-int minuto = 30;//minuto padrão para início
+int minuto = 00;//minuto padrão para início
 bool com_ir = false;//verifica se o comando para mudar temperatura do ar foi acionado
 //bool dis_esc = false;//verifica se pode mandar comando para o display
 int atu_hora; //horario atual
@@ -183,6 +183,10 @@ void calcularTempoRestante (String textinho,long miliseg){
   } else {
     segundos_restantes = String(seg_rest);
   }
+
+  if (min_rest < 10){
+    min_rest = "0" + min_rest;
+  } 
   
   escreverDisplay(textinho,"0" + String(min_rest) + ":" + segundos_restantes);
   //escreverDisplay(String(miliseg),"");
@@ -199,40 +203,52 @@ void verificaMudancaPrograma(){
   //10 MINUTOS == 600.000 MILISEGUNDOS
   if (state == 2){
     if (ciclo == 1){
-      if (millis() > (temp_decorr + 600000)){
+      if (millis() > (temp_decorr + 1800000)){
         state = 3;
         //temp_pisc = millis();
         //int segundo_inicial_contagem = dataehora.second;
         //int minuto_inicial_contagem = dataehora.minute;
       }
       else{
-        calcularTempoRestante("Ciclo 1: Escura",millis() - temp_decorr);
+        escreverDisplay("Baixar temp.",String(millis() - temp_decorr));
+        //calcularTempoRestante("Baixar temp.",millis() - temp_decorr);
       }
     }
     else if (ciclo == 2){
-      if (millis() > (temp_decorr + 1800000)){
+      if (millis() > (temp_decorr + 3000000)){
         state = 3;
         //temp_pisc = millis();
         //int segundo_inicial_contagem = dataehora.second;
         //int minuto_inicial_contagem = dataehora.minute;
       } else{
-        calcularTempoRestante("Ciclo 2: Escura",millis() - temp_decorr - 1200000);
+        calcularTempoRestante("Ciclo 1: Escura",millis() - temp_decorr - 1200000);
       }
     }
     else if (ciclo == 3){
-      if (millis() > (temp_decorr + 3000000)){
+      if (millis() > (temp_decorr + 4200000)){
         state = 3;
         //temp_pisc = millis();
         //int segundo_inicial_contagem = dataehora.second;
         //int minuto_inicial_contagem = dataehora.minute;
         
       } else {
-        calcularTempoRestante("Ciclo 3: Escura",millis() - temp_decorr - 2400000);
+        calcularTempoRestante("Ciclo 2: Escura",millis() - temp_decorr - 2400000);
       }
     }
     else if (ciclo == 4){
-      if (millis() > (temp_decorr + 4200000)){
+      if (millis() > (temp_decorr + 5400000)){
         state = 3;
+        //temp_pisc = millis();
+        //int segundo_inicial_contagem = dataehora.second;
+        //int minuto_inicial_contagem = dataehora.minute;
+      } else {
+        calcularTempoRestante("Ciclo 3: Escura",millis() - temp_decorr - 3600000);
+      }
+    }
+    else if (ciclo == 5){
+      if (millis() > (temp_decorr + 6600000)){
+        //state = 3;
+        finalizarPrograma();
         //temp_pisc = millis();
         //int segundo_inicial_contagem = dataehora.second;
         //int minuto_inicial_contagem = dataehora.minute;
@@ -243,7 +259,7 @@ void verificaMudancaPrograma(){
   }
   else if (state == 3){
     if (ciclo == 1){
-      if (millis() > (temp_decorr + 1200000)){
+      if (millis() > (temp_decorr + 2400000)){
         ciclo = 2;
         state = 2;
         //int segundo_inicial_contagem = dataehora.second;
@@ -254,7 +270,7 @@ void verificaMudancaPrograma(){
       }
     }
     else if (ciclo == 2){
-      if (millis() > (temp_decorr + 2400000)){
+      if (millis() > (temp_decorr + 3600000)){
         ciclo = 3;
         state = 2;
         //int segundo_inicial_contagem = dataehora.second;
@@ -264,7 +280,7 @@ void verificaMudancaPrograma(){
       }
     }
     else if (ciclo == 3){
-      if (millis() > (temp_decorr + 3600000)){
+      if (millis() > (temp_decorr + 4800000)){
         ciclo = 4;
         state = 2;
         //int segundo_inicial_contagem = dataehora.second;
@@ -274,10 +290,11 @@ void verificaMudancaPrograma(){
       }
     }
     else if (ciclo == 4){
-      if (millis() > (temp_decorr + 4800000)){
+      if (millis() > (temp_decorr + 6000000)){
         //escrever finalização
         //envia sinal para voltar a temperatura do ar condicionado
-        finalizarPrograma();
+        ciclo = 5;
+        state = 2;
       } else {
         calcularTempoRestante("Ciclo 4: Flashs",millis() - temp_decorr - 4200000);
       }
